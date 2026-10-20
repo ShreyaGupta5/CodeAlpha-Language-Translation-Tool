@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinguaFlow AI — Smart Language Translation Tool | CodeAlpha Task 1</title>
+  <meta name="description" content="AI-Powered Language Translation Tool supporting 100+ languages, real-time voice recognition, speech synthesis, and instant auto-detection. Built for CodeAlpha Artificial Intelligence Internship.">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <!-- Background Glow Accents -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+
+  <!-- App Wrapper -->
+  <div class="app-layout">
+    
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-icon-wrapper">
+          <i class="fa-solid fa-language brand-icon"></i>
+          <span class="brand-sparkle"><i class="fa-solid fa-sparkles"></i></span>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">LinguaFlow <span class="gradient-text">AI</span></h1>
+          <p class="brand-subtitle">CodeAlpha AI Internship • Task 1</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Live Status Pill -->
+        <div class="status-pill" id="engineStatus">
+          <span class="status-dot online"></span>
+          <span class="status-label">AI Engine Ready</span>
+        </div>
+
+        <!-- History Drawer Button -->
+        <button class="nav-btn" id="historyToggleBtn" title="View Translation History" aria-label="Translation History">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <span class="nav-btn-text">History</span>
+          <span class="history-badge" id="historyCount">0</span>
+        </button>
+
+        <!-- Theme Selector -->
+        <div class="theme-dropdown">
+          <button class="nav-btn theme-btn" id="themeToggleBtn" title="Switch Theme" aria-label="Toggle Theme">
+            <i class="fa-solid fa-moon" id="themeIcon"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+      
+      <!-- Quick Test Phrases (Demo Chips) -->
+      <section class="sample-chips-section">
+        <span class="chips-label"><i class="fa-solid fa-lightbulb"></i> Quick Prompts:</span>
+        <div class="chips-scroller">
+          <button class="sample-chip" data-text="Hello! Welcome to the CodeAlpha Language Translation Tool.">
+            👋 Greetings
+          </button>
+          <button class="sample-chip" data-text="Artificial Intelligence and Neural Networks are revolutionizing natural communication.">
+            🤖 AI & Tech
+          </button>
+          <button class="sample-chip" data-text="Could you please guide me to the nearest railway station or airport?">
+            ✈️ Travel
+          </button>
+          <button class="sample-chip" data-text="Thank you very much for your mentorship, guidance, and continuous support.">
+            💼 Professional
+          </button>
+          <button class="sample-chip" data-text="How much does this cost, and do you accept digital card payments?">
+            🛍️ Shopping
+          </button>
+        </div>
+      </section>
+
+      <!-- Language Selector Bar -->
+      <section class="lang-bar-card">
+        <!-- Source Selector -->
+        <div class="lang-picker-group">
+          <label for="sourceLangSelect" class="picker-label">
+            <i class="fa-solid fa-earth-americas"></i> Source Language
+          </label>
+          <div class="select-wrapper">
+            <select id="sourceLangSelect" class="lang-select" aria-label="Source Language">
+              <option value="auto">✨ Auto Detect</option>
+              <!-- Populated dynamically via JS -->
+            </select>
+            <i class="fa-solid fa-chevron-down select-chevron"></i>
+          </div>
+        </div>
+
+        <!-- Swap Languages Button -->
+        <div class="swap-btn-group">
+          <button id="swapLangsBtn" class="swap-action-btn" title="Swap Languages (Ctrl + Shift + S)" aria-label="Swap Languages">
+            <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          </button>
+        </div>
+
+        <!-- Target Selector -->
+        <div class="lang-picker-group">
+          <label for="targetLangSelect" class="picker-label">
+            <i class="fa-solid fa-globe"></i> Target Language
+          </label>
+          <div class="select-wrapper">
+            <select id="targetLangSelect" class="lang-select" aria-label="Target Language">
+              <!-- Populated dynamically via JS -->
+            </select>
+            <i class="fa-solid fa-chevron-down select-chevron"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dual Translation Panels Grid -->
+      <section class="translation-workspace">
+        
+        <!-- Left: Source Panel -->
+        <div class="editor-card source-card" id="sourceCard">
+          <div class="editor-header">
+            <div class="panel-meta">
+              <span class="meta-tag" id="sourceLangTag">Input Text</span>
+              <span class="meta-detected" id="detectedPill" style="display: none;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> <span id="detectedName">English</span>
+              </span>
+            </div>
+            <div class="panel-quick-actions">
+              <button class="icon-tool-btn" id="pasteBtn" title="Paste from clipboard">
+                <i class="fa-regular fa-paste"></i>
+              </button>
+              <button class="icon-tool-btn" id="clearBtn" title="Clear text">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="textarea-container">
+            <textarea
+              id="sourceText"
+              class="editor-textarea"
+              placeholder="Type, paste text here, or use voice input to speak..."
+              maxlength="5000"
+              spellcheck="false"
+            ></textarea>
+            
+            <!-- Voice Recognition Pulse Overlay -->
+            <div class="speech-recording-banner" id="recordingBanner" style="display: none;">
+              <span class="pulse-wave"></span>
+              <span class="recording-text"><i class="fa-solid fa-microphone-lines"></i> Listening to your speech... Speak now</span>
+              <button class="stop-rec-btn" id="stopRecBtn">Done</button>
+            </div>
+          </div>
+
+          <!-- Source Footer Toolbar -->
+          <div class="editor-footer">
+            <div class="left-tools">
+              <!-- Voice Input Button (Speech-to-Text) -->
+              <button class="footer-tool-btn mic-btn" id="micBtn" title="Voice Input (Dictate text)" aria-label="Voice Input">
+                <i class="fa-solid fa-microphone"></i>
+                <span>Voice</span>
+              </button>
+              <!-- Speech Synthesizer (Listen) -->
+              <button class="footer-tool-btn" id="speakSourceBtn" title="Pronounce source text" aria-label="Listen to Source">
+                <i class="fa-solid fa-volume-high"></i>
+                <span>Listen</span>
+              </button>
+            </div>
+
+            <div class="right-tools">
+              <span class="char-counter" id="sourceCounter">0 / 5000 chars</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Target Panel -->
+        <div class="editor-card target-card" id="targetCard">
+          <div class="editor-header">
+            <div class="panel-meta">
+              <span class="meta-tag accent" id="targetLangTag">Translation</span>
+              <span class="meta-provider" id="providerTag">Google Neural API</span>
+            </div>
+            <div class="panel-quick-actions">
+              <!-- Copy Translation Button -->
+              <button class="icon-tool-btn" id="copyBtn" title="Copy Translation (Ctrl+C)">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+              <!-- Download Text Button -->
+              <button class="icon-tool-btn" id="downloadTxtBtn" title="Download text as .txt">
+                <i class="fa-solid fa-download"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="textarea-container">
+            <textarea
+              id="targetText"
+              class="editor-textarea result-textarea"
+              placeholder="Your translated output will appear here instantly..."
+              readonly
+              spellcheck="false"
+            ></textarea>
+
+            <!-- Loading Spinner State -->
+            <div class="translation-loader" id="translationLoader" style="display: none;">
+              <div class="spinner-ring"></div>
+              <span class="loader-text">Translating with Neural AI...</span>
+            </div>
+          </div>
+
+          <!-- Target Footer Toolbar -->
+          <div class="editor-footer">
+            <div class="left-tools">
+              <!-- Speech Synthesizer (Listen to translated text) -->
+              <button class="footer-tool-btn" id="speakTargetBtn" title="Pronounce translated text" aria-label="Listen to Translation">
+                <i class="fa-solid fa-volume-high"></i>
+                <span>Listen</span>
+              </button>
+              <!-- Favorite Button -->
+              <button class="footer-tool-btn" id="favBtn" title="Save to favorites">
+                <i class="fa-regular fa-star"></i>
+                <span>Save</span>
+              </button>
+            </div>
+
+            <div class="right-tools">
+              <span class="char-counter" id="targetCounter">0 chars</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Primary Action Bar -->
+      <section class="action-bar-section">
+        <div class="action-hint">
+          <span><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to translate</span>
+          <span><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> to swap</span>
+        </div>
+
+        <button id="translateBtn" class="primary-translate-btn">
+          <i class="fa-solid fa-bolt-lightning"></i>
+          <span>Translate Now</span>
+        </button>
+      </section>
+
+      <!-- Feature Highlights Grid -->
+      <section class="features-summary">
+        <div class="feature-card">
+          <div class="feat-icon"><i class="fa-solid fa-bolt"></i></div>
+          <div class="feat-info">
+            <h4>Fast Dual-API Engine</h4>
+            <p>Google Translate API with automated MyMemory fallback system.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feat-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+          <div class="feat-info">
+            <h4>Voice Dictation & TTS</h4>
+            <p>Integrated speech recognition and crystal-clear pronunciation audio.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <div class="feat-info">
+            <h4>100+ Global Languages</h4>
+            <p>Supports English, Hindi, Spanish, French, German, Arabic, Japanese & more.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Slide-out History Drawer -->
+    <aside class="history-drawer" id="historyDrawer">
+      <div class="drawer-header">
+        <div class="drawer-title">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <h3>Translation History</h3>
+        </div>
+        <div class="drawer-actions">
+          <button class="text-action-btn" id="clearHistoryBtn" title="Clear all history">Clear All</button>
+          <button class="close-drawer-btn" id="closeDrawerBtn" title="Close Drawer">&times;</button>
+        </div>
+      </div>
+
+      <div class="drawer-content" id="historyList">
+        <!-- Rendered dynamically -->
+        <div class="empty-history-state">
+          <i class="fa-regular fa-folder-open empty-icon"></i>
+          <p>No recent translations yet.</p>
+          <span class="empty-sub">Translations you perform will be saved here automatically.</span>
+        </div>
+      </div>
+    </aside>
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+    <!-- Toast Notification Banner -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- App Footer -->
+    <footer class="app-footer">
+      <p>
+        <strong>CodeAlpha Artificial Intelligence Internship</strong> • Task 1: Language Translation Tool
+      </p>
+      <p class="footer-credits">
+        Designed with modern Neural NLP Architecture & High-Performance Web Standards
+      </p>
+    </footer>
+
+  </div>
+
+  <!-- Application Logic -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

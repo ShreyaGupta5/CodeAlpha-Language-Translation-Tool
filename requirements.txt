@@ -1,0 +1,4 @@
+# CodeAlpha AI Internship - Task 1: Language Translation Tool
+# Dependencies
+Flask>=3.0.0
+requests>=2.31.0
